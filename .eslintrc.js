@@ -1,0 +1,23 @@
+module.exports = {
+    extends: 'airbnb',
+    parser: 'babel-eslint',
+    rules: {
+        indent: ['error', 4, { SwitchCase: 1 }],
+        camelcase: [0],
+        semi: ['error', 'never'],
+        'no-console': [0],
+        'no-alert': [0],
+        'no-underscore-dangle': ['error', { allowAfterThis: true }],
+        'no-restricted-syntax': [0],
+        'class-methods-use-this': [0],
+        'react/sort-comp': [0],
+        'react/no-array-index-key': [0],
+        'react/jsx-filename-extension': ['error', { extensions: ['.js'] }],
+        'react/jsx-indent-props': ['error', 4],
+        'react/jsx-indent': ['error', 4],
+        'react/prop-types': [0],
+        'react/jsx-props-no-spreading': [0],
+        'linebreak-style': 0,
+        'arrow-parens': 'as-needed',
+    },
+}
