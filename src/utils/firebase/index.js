@@ -28,6 +28,10 @@ const signIn = (credentials) => {
     return firebase.auth().signInWithCredential(credentials)
 }
 
+const logout = () => {
+    return firebase.auth().signOut()
+}
+
 const getCurrentUser = () => {
     return firebase.auth().currentUser
 }
@@ -48,12 +52,17 @@ const _normalizeFirebaseData = data => {
 }
 
 const saveDocument = async (collection, doc, data, { addIfUnexisting = false } = {}) => {
-    const exists = await documentExists(collection, doc)
+    const exists = !!doc && await documentExists(collection, doc)
     if (!addIfUnexisting && !exists) {
         return false
     }
     const options = { merge: exists }
-    await db.collection(collection).doc(doc).set(_normalizeFirebaseData(data), options)
+    if (doc) {
+        await db.collection(collection).doc(doc).set(_normalizeFirebaseData(data), options)
+    } else {
+        const result = await db.collection(collection).add(_normalizeFirebaseData(data))
+        return result.id
+    }
     return true
 }
 
@@ -63,7 +72,21 @@ const loadDocument = async (collection, doc) => {
         return false
     }
     const snapshot = await db.collection(collection).doc(doc).get()
-    return snapshot.data()
+    return {
+        ...snapshot.data(),
+        _id: doc
+    }
+}
+
+const query = async (collection, queries = []) => {
+    const dbCollection = db.collection(collection)
+    queries.forEach(query => {
+        dbCollection.where(query[0], query[1], query[2])
+    })
+    const snapshot = await dbCollection.get()
+    return snapshot.docs.map(doc => {
+        return doc.data()
+    })
 }
 
 export default firebase
@@ -72,8 +95,10 @@ export {
     sendPin,
     verifyPin,
     signIn,
+    logout,
     getCurrentUser,
     documentExists,
     saveDocument,
     loadDocument,
+    query
 }

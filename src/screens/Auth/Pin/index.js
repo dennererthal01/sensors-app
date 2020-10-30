@@ -21,7 +21,7 @@ export default observer(({ navigation }) => {
     const appState = useContext(AppState)
     const verificationId = navigation.getParam('verificationId')
 
-    const viewState = useLocalStore(ViewState, { appState, verificationId, phone })
+    const viewState = useLocalStore(ViewState, { appState, verificationId })
 
     const { pin, signingIn, canSignIn, error } = viewState
 

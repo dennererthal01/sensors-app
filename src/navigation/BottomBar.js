@@ -4,8 +4,10 @@ import { observer } from 'mobx-react-lite'
 import { BottomNavigation, BottomNavigationTab } from '@ui-kitten/components'
 
 export default observer(({ navigation }) => {
-    const navigate = index => {
-        // navigation.navigate()
+    const routes = ['Overview', 'Settings']
+
+    const navigate = (index) => {
+        navigation.navigate(routes[index])
     }
 
     return (

@@ -1,11 +1,20 @@
 import { observable, decorate } from 'mobx'
 
-import { loadDocument, saveDocument } from '../utils/firebase'
+import { loadDocument, saveDocument, query } from '../utils/firebase'
 
 class Model {
     collection
 
     id
+
+    static async query(collection, queries, modelClass) {
+        const docs = await query(collection, queries)
+        return docs.map(doc => {
+            const newClass = new modelClass()
+            newClass.fromJSON(doc)
+            return newClass
+        })
+    }
 
     constructor(collection) {
         if (!collection) {
@@ -29,7 +38,14 @@ class Model {
         return true
     }
 
-    save() {
+    async save() {
+        if (!this.id) {
+            const newId = await saveDocument(this.collection, this.id, this.toJSON(), { addIfUnexisting: true })
+            if (newId) {
+                this.id = newId
+            }
+            return !!newId
+        }
         return saveDocument(this.collection, this.id, this.toJSON(), { addIfUnexisting: true })
     }
 

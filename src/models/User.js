@@ -11,7 +11,6 @@ class User extends Model {
 
     email
 
-    // { device, role }
     devices = []
 
     onboarded = false

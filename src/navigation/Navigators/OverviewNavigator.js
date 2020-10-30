@@ -8,7 +8,7 @@ const OverviewScreenStack = createStackNavigator(
         Overview: OverviewDashboardScreen,
     },
     {
-        initialRouteName: 'OverviewScreen',
+        initialRouteName: 'Overview',
         headerMode: 'none',
     }
 )

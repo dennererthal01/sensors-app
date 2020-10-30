@@ -1,20 +1,24 @@
 /* eslint-disable global-require */
-import React from 'react'
+import React, { useContext } from 'react'
 import { observer } from 'mobx-react-lite'
 
 import { View, ScrollView, Dimensions } from 'react-native'
-import { Text } from '@ui-kitten/components'
+import { Text, Button } from '@ui-kitten/components'
 
 import {
     LineChart,
     PieChart,
   } from 'react-native-chart-kit'
 
+import AppState from '../../../AppState'
+
 import Container from '../../../components/Container'
+import { app } from 'firebase'
 
 let styles
 
 export default observer(({ navigation }) => {
+    const appState = useContext(AppState)
 
     const pieData = [
         { name: 'Ativos', value: 10, color: 'green', legendFontColor: 'black', legendFontSize: 15 },
@@ -68,6 +72,10 @@ export default observer(({ navigation }) => {
                     accessor="value"
                     backgroundColor="transparent"
                 />
+                <Button
+                    onPress={appState.logout}>
+                    Logout
+                </Button>
             </ScrollView>
         </Container>
     )

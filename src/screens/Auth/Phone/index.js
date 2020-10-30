@@ -80,7 +80,6 @@ export default observer(({ navigation }) => {
             <FirebaseRecaptchaVerifierModal
                 ref={recaptchaVerifier}
                 firebaseConfig={config.firebase}
-                onError={err => console.log(err)}
             />
         </Container>
     )
