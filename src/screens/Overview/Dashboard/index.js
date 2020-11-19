@@ -1,81 +1,88 @@
 /* eslint-disable global-require */
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 
-import { View, ScrollView, Dimensions } from 'react-native'
-import { Text, Button } from '@ui-kitten/components'
-
-import {
-    LineChart,
-    PieChart,
-  } from 'react-native-chart-kit'
+import { ScrollView } from 'react-native'
+import { Button, Icon, Text } from '@ui-kitten/components'
 
 import AppState from '../../../AppState'
 
 import Container from '../../../components/Container'
-import { app } from 'firebase'
+
+import LastMeasures from './LastMeasures'
+import Query from './Query'
+import Tabs from './Tabs'
 
 let styles
+
+const sensors = {
+    Temperatura: {
+        card: '#EE6969',
+        value: '#C34E4E',
+        parse: value => (
+            <Text style={styles.valueText}>
+                {parseInt(value)}
+            </Text>
+        )
+    },
+    Umidade: {
+        card: '#3FD761',
+        value: '#45A85B',
+        parse: value => (
+            <Text style={styles.valueText}>
+                {parseInt(value)}
+            </Text>
+        )
+    },
+    Luminosidade: {
+        card: '#5891E7',
+        value: '#3571CB',
+        parse: value => (
+            <Text style={styles.valueText}>
+                {parseInt((value * 100) / 1033)}
+            </Text>
+        )
+    },
+    Gabinete: {
+        card: '#ffd966',
+        value: '#d6b12b',
+        parse: value => {
+            const open = parseInt(value, 10) === 0
+            return (
+                <Icon
+                    style={{ width: 50, height: 50 }}
+                    fill='#ffffff'
+                    name={open ? 'unlock-outline' : 'lock-outline'}
+                />
+            )
+        }
+    }
+}
 
 export default observer(({ navigation }) => {
     const appState = useContext(AppState)
 
-    const pieData = [
-        { name: 'Ativos', value: 10, color: 'green', legendFontColor: 'black', legendFontSize: 15 },
-        { name: 'Inativos', value: 2, color: 'red', legendFontColor: 'black', legendFontSize: 15 },
-    ]
+    const [selectedTab, setSelectedTab] = useState(0)
 
-    const sampleData = {
-        labels: ['01/10/2020', '02/10/2020', '03/10/2020'],
-        datasets: [{
-            data: [30, 28, 27]
-        }]
+    const { activeDevice } = appState
+
+    const goToActiveDevices = () => {
+        navigation.navigate('ChooseActiveDevice')
     }
 
     return (
         <Container style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
-                <Text category='h6'>Temperatura (°)</Text>
-                <LineChart
-                    data={sampleData}
-                    width={Dimensions.get('window').width}
-                    height={200}
-                    bezier
-                    chartConfig={{
-                        backgroundColor: '#ffffff',
-                        backgroundGradientFrom: '#ffffff',
-                        backgroundGradientTo: '#ffffff',
-                        color: (opacity = 1) => `rgba(3, 69, 252, ${opacity})`,
-                        decimalPlaces: 0
-                    }}
-                    style={{
-                        marginVertical: 8,
-                        marginHorizontal: -32,
-                    }}
-                    />
-                <Text style={{ marginTop: 50 }} category='h6'>Dispositivos</Text>
-                <PieChart
-                    data={pieData}
-                    width={Dimensions.get('window').width}
-                    height={200}
-                    chartConfig={{
-                        backgroundColor: '#ffffff',
-                        backgroundGradientFrom: '#ffffff',
-                        backgroundGradientTo: '#ffffff',
-                        color: (opacity = 1) => `rgba(3, 69, 252, ${opacity})`,
-                        decimalPlaces: 0
-                    }}
-                    style={{
-                        marginVertical: 8,
-                        marginHorizontal: -10,
-                    }}
-                    accessor="value"
-                    backgroundColor="transparent"
-                />
-                <Button
-                    onPress={appState.logout}>
-                    Logout
+                <Button size="medium" appearance="ghost" onPress={goToActiveDevices}>
+                    {activeDevice ? activeDevice.name : 'Nenhum dispositivo selecionado'}
                 </Button>
+                <Tabs selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+                {selectedTab === 0 && (
+                    <LastMeasures sensorConfig={sensors} />
+                )}
+                {selectedTab === 1 && (
+                    <Query sensorConfig={sensors} />
+                )}
             </ScrollView>
         </Container>
     )
@@ -88,8 +95,11 @@ styles = {
         paddingHorizontal: 20,
     },
     content: {
-        marginTop: 30,
         flexGrow: 1,
         justifyContent: 'flex-start',
-    }
+    },
+    valueText: {
+        color: '#fff',
+        fontSize: 48,
+    },
 }

@@ -2,6 +2,17 @@ import { createStackNavigator } from 'react-navigation-stack'
 import { getActiveChildNavigationOptions } from 'react-navigation'
 
 import OverviewDashboardScreen from '../../screens/Overview/Dashboard'
+import ChooseActiveDeviceScreen from '../../modules/ChooseActiveDevice'
+
+const ChooseActiveDeviceStack = createStackNavigator(
+    {
+        ChooseActiveDevice: ChooseActiveDeviceScreen,
+    }, 
+    {
+        initialRouteName: 'ChooseActiveDevice',
+        headerMode: 'none'
+    }
+)
 
 const OverviewScreenStack = createStackNavigator(
     {
@@ -16,6 +27,7 @@ const OverviewScreenStack = createStackNavigator(
 const OverviewStack = createStackNavigator(
     {
         Overview: OverviewScreenStack,
+        ChooseActiveDevice: ChooseActiveDeviceStack,
     },
     {
         initialRouteName: 'Overview',

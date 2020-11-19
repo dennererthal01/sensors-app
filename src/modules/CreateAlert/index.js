@@ -11,7 +11,11 @@ import Working from '../../components/Working'
 
 import Header from './Header'
 import Name from './Name'
-import Token from './Token'
+import Device from './Device'
+import Sensor from './Sensor'
+import Operator from './Operator'
+import Value from './Value'
+import Description from './Description'
 import Delete from './Delete'
 import ViewState from './ViewState'
 
@@ -20,9 +24,9 @@ let styles
 export default observer(({ navigation }) => {
     const appState = useContext(AppState)
 
-    const deviceId = navigation.getParam('deviceId')
+    const alertId = navigation.getParam('alertId')
 
-    const viewState = useLocalStore(ViewState, { appState, deviceId })
+    const viewState = useLocalStore(ViewState, { appState, alertId })
 
     useEffect(() => {
         viewState.init()
@@ -34,7 +38,11 @@ export default observer(({ navigation }) => {
             <Header viewState={viewState} />
             <View style={styles.content}>
                 <Name viewState={viewState} />
-                <Token viewState={viewState} />
+                <Device viewState={viewState} />
+                <Sensor viewState={viewState} />
+                <Operator viewState={viewState} />
+                <Value viewState={viewState} />
+                <Description viewState={viewState} />
                 <Delete viewState={viewState} />
             </View>
         </Container>

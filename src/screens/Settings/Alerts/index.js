@@ -16,21 +16,21 @@ let styles
 export default observer(({ navigation }) => {
     const appState = useContext(AppState)
 
-    const { devices } = appState
+    const { alerts } = appState
 
-    const data = devices.concat([{
-        label: 'Novo dispositivo',
+    const data = alerts.concat([{
+        label: 'Novo alerta',
         id: 'new'
     }])
 
-    const goToCreateDevice = (deviceId) => {
-        navigation.navigate('CreateDevice', { deviceId })
+    const goToCreateAlert = (alertId) => {
+        navigation.navigate('CreateAlert', { alertId })
     }
 
-    const renderItemAccessory = (icon, deviceId) => (style) => {
+    const renderItemAccessory = (icon, alertId) => (style) => {
         if (icon === 'settings-outline') {
             return (
-                <TouchableOpacity onPress={() => goToCreateDevice(deviceId)}>
+                <TouchableOpacity onPress={() => goToCreateAlert(alertId)}>
                     <Icon {...style} name={icon} />     
                 </TouchableOpacity>
             )
@@ -47,7 +47,7 @@ export default observer(({ navigation }) => {
         if (index === data.length - 1) {
             return (
                 <ListItem
-                    onPress={goToCreateDevice}
+                    onPress={goToCreateAlert}
                     title={item.label}
                     accessoryLeft={renderItemIcon('plus-outline')}
                     accessoryRight={renderItemAccessory('arrow-forward-outline')}
@@ -57,8 +57,8 @@ export default observer(({ navigation }) => {
         return (
             <ListItem
                 title={item.name}
-                description={item.token}
-                accessoryLeft={renderItemIcon('shake-outline')}
+                description={'Device here'}
+                accessoryLeft={renderItemIcon('alert-triangle-outline')}
                 accessoryRight={renderItemAccessory('settings-outline', item.id)}
             />
         )

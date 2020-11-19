@@ -7,7 +7,7 @@ import { TopNavigation } from '@ui-kitten/components'
 import HeaderButton from '../../components/HeaderButton'
 
 const Header = observer(({ navigation, viewState }) => {
-    const { saving, isValid, isNewDevice } = viewState
+    const { saving, isValid, isNewAlert } = viewState
 
     const goBack = () => {
         navigation.goBack(null)
@@ -28,13 +28,13 @@ const Header = observer(({ navigation, viewState }) => {
 
     const renderRightControl = () => (
         <HeaderButton onPress={save} disabled={!isValid || saving}>
-            {isNewDevice ? 'Criar' : 'Salvar'}
+            {isNewAlert ? 'Criar' : 'Salvar'}
         </HeaderButton>
     )
 
     return (
         <TopNavigation
-            title={isNewDevice ? 'Novo dispositivo' : 'Editar dispositivo'}
+            title={isNewAlert ? 'Novo alerta' : 'Editar alerta'}
             alignment="center"
             accessoryLeft={renderLeftControl}
             accessoryRight={renderRightControl}

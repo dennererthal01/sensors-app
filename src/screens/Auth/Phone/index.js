@@ -29,6 +29,7 @@ export default observer(({ navigation }) => {
 
     const signUp = async () => {
         const result = await viewState.signUp(recaptchaVerifier.current)
+        console.log(recaptchaVerifier.current)
         if (result) {
             navigation.navigate('Pin', { phone: viewState.normalizedPhone, verificationId: result })
         }

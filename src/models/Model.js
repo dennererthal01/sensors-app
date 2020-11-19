@@ -1,11 +1,13 @@
 import { observable, decorate } from 'mobx'
 
-import { loadDocument, saveDocument, query } from '../utils/firebase'
+import { loadDocument, saveDocument, query, watchDocument, removeDocument } from '../utils/firebase'
 
 class Model {
     collection
 
     id
+
+    _watcher
 
     static async query(collection, queries, modelClass) {
         const docs = await query(collection, queries)
@@ -38,6 +40,26 @@ class Model {
         return true
     }
 
+    async watch(id) {
+        if (id) {
+            this.id = id
+        }
+        if (!this.id) {
+            throw new Error('No id specified')
+        }
+
+        this.unwatch()
+        this._watcher = watchDocument(this.collection, this.id, newData => {
+            this.fromJSON(newData)
+        })
+    }
+
+    unwatch() {
+        if (this._watcher) {
+            this._watcher()
+        }
+    }
+
     async save() {
         if (!this.id) {
             const newId = await saveDocument(this.collection, this.id, this.toJSON(), { addIfUnexisting: true })
@@ -51,6 +73,10 @@ class Model {
 
     update() {
         return saveDocument(this.collection, this.id, this.toJSON())
+    }
+
+    remove() {
+        return removeDocument(this.collection, this.id)
     }
 
     fromJSON(data) {

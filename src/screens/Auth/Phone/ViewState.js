@@ -9,6 +9,7 @@ export default () => ({
         this.signingUp = true
         let result
         try {
+            console.log(recaptcha)
             result = await sendPin(this.normalizedPhone, recaptcha)
         } catch (e) {
             catchError(e, 'unknown')

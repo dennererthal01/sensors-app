@@ -51,6 +51,18 @@ const _normalizeFirebaseData = data => {
     return normalizedData
 }
 
+const _firebaseToData = data => {
+    const normalizedData = {}
+    Object.keys(data).forEach(key => {
+        if (data[key] && data[key].nanoseconds && data[key].seconds) {
+            normalizedData[key] = new firebase.firestore.Timestamp(data[key].seconds, data[key].nanoseconds).toDate()
+        } else {
+            normalizedData[key] = data[key]
+        }
+    })
+    return normalizedData
+}
+
 const saveDocument = async (collection, doc, data, { addIfUnexisting = false } = {}) => {
     const exists = !!doc && await documentExists(collection, doc)
     if (!addIfUnexisting && !exists) {
@@ -73,20 +85,46 @@ const loadDocument = async (collection, doc) => {
     }
     const snapshot = await db.collection(collection).doc(doc).get()
     return {
-        ...snapshot.data(),
+        ..._firebaseToData(snapshot.data()),
         _id: doc
     }
 }
 
 const query = async (collection, queries = []) => {
-    const dbCollection = db.collection(collection)
+    let dbCollection = db.collection(collection)
     queries.forEach(query => {
-        dbCollection.where(query[0], query[1], query[2])
+        dbCollection = dbCollection.where(query[0], query[1], query[2])
     })
     const snapshot = await dbCollection.get()
     return snapshot.docs.map(doc => {
-        return doc.data()
+        return {
+            ..._firebaseToData(doc.data()),
+            _id: doc.id,
+        }
     })
+}
+
+const watchDocument = async (collection, doc, onChange) => {
+    return db.collection(collection).doc(doc).onSnapshot((firestoreDoc) => {
+        onChange({
+            ..._firebaseToData(firestoreDoc.data()),
+            _id: doc
+        })
+    })
+}
+
+const removeDocument = async (collection, doc) => {
+    const exists = await documentExists(collection, doc)
+    if (!exists) {
+        return false
+    }
+    try {
+        await db.collection(collection).doc(doc).delete()
+    } catch (e) {
+        console.log('error deleting document', e)
+        return false
+    }
+    return true
 }
 
 export default firebase
@@ -100,5 +138,7 @@ export {
     documentExists,
     saveDocument,
     loadDocument,
-    query
+    query,
+    watchDocument,
+    removeDocument
 }

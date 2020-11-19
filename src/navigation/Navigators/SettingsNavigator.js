@@ -3,7 +3,9 @@ import { getActiveChildNavigationOptions } from 'react-navigation'
 
 import SettingsHomeScreen from '../../screens/Settings/Home'
 import SettingsDevicesScreen from '../../screens/Settings/Devices'
+import SettingsAlertsScreen from '../../screens/Settings/Alerts'
 import CreateDeviceScreen from '../../modules/CreateDevice'
+import CreateAlertScreen from '../../modules/CreateAlert'
 
 const CreateDeviceScreenStack = createStackNavigator(
     {
@@ -15,10 +17,21 @@ const CreateDeviceScreenStack = createStackNavigator(
     }
 )
 
+const CreateAlertScreenStack = createStackNavigator(
+    {
+        CreateAlert: CreateAlertScreen,
+    }, 
+    {
+        initialRouteName: 'CreateAlert',
+        headerMode: 'none'
+    }
+)
+
 const SettingsScreenStack = createStackNavigator(
     {
         Settings: SettingsHomeScreen,
-        Devices: SettingsDevicesScreen
+        Devices: SettingsDevicesScreen,
+        Alerts: SettingsAlertsScreen
     },
     {
         initialRouteName: 'Settings',
@@ -30,6 +43,7 @@ const OverviewStack = createStackNavigator(
     {
         Settings: SettingsScreenStack,
         CreateDevice: CreateDeviceScreenStack,
+        CreateAlert: CreateAlertScreenStack,
     },
     {
         initialRouteName: 'Settings',
